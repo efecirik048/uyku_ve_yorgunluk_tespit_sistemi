@@ -1,22 +1,29 @@
-# 🚗 Sürücü Uyku ve Yorgunluk Tespit Sistemi
+# Görüntü İşleme Tabanlı Sürücü Yorgunluk ve Uyku Tespit Sistemi
 
-Bu proje, bilgisayarlı görü (computer vision) teknikleri kullanılarak sürücülerin anlık durumunu analiz eden ve olası uyku/yorgunluk belirtilerinde uyarı veren bir yapay zeka sistemidir.
+Bu proje, bilgisayarlı görü ve makine öğrenmesi teknikleri kullanılarak sürücülerin uykuya dalma ve yorgunluk durumlarını gerçek zamanlı olarak tespit etmeyi amaçlayan bir güvenlik asistanıdır.
 
-Sistem, kamera üzerinden yüz hatlarını ve önemli noktaları (facial landmarks) tespit eder. Özellikle göz kapanma süresi ve esneme gibi fiziksel yorgunluk belirtilerini anlık olarak takip ederek olası kazaların önüne geçmeyi amaçlar.
+## 🚀 Projenin Güncel Özellikleri (Final Sürümü)
 
-## 📸 Sistemden Görüntü
-![Sistem Ekran Görüntüsü](ekran_goruntusu.png)
+Vize sonrasında projeye eklenen yeni donanımsal ve algoritmik çözümlerle sistemin kararlılığı maksimuma çıkarılmıştır:
+
+* **EAR (Eye Aspect Ratio) ile Uyku Tespiti:** Sürücünün göz kapaklarının dikey ve yatay mesafeleri (Öklid uzaklığı) hesaplanarak uykuya dalma anı (3 saniye kapalılık) tespit edilir.
+* **Kafa Eğimi (Head Tilt) Tespiti:** Sürücünün yorgunluğa bağlı olarak kafasının düşmesi (Roll açısının 20 dereceyi aşması) matematiksel `arctan2` fonksiyonu ile tespit edilip anında uyarı verilir.
+* **Dinamik Zoom ve Gimbal Etkisi:** Araç içi sarsıntılardan etkilenmemek için yüzün geometrik merkezi sürekli takip edilir. LERP (Linear Interpolation) mantığıyla kamera görüntüsü dinamik olarak kırpılarak (zoom) sürücünün yüzü daima merkezde tutulur.
+* **Hassas Görünürlük Kontrolü (Canny Edge):** Işık parlaması veya gözlük yansıması gibi durumlarda kameranın körleştiğini tespit etmek için Canny kenar bulma algoritması çalışır. Sistem gözleri göremediğinde asılsız alarm vermek yerine kendini korumaya alıp kullanıcıdan 'E' tuşu ile onay bekler.
+* **Asenkron Alarm (Threading):** Alarm çalarken ana döngünün (FPS) yavaşlamaması için sesli ikaz sistemi arka planda paralel olarak çalıştırılır.
 
 ## 🛠️ Kullanılan Teknolojiler
+
 * **Dil:** Python
-* **Görüntü İşleme & Yüz Tespiti:** OpenCV, Dlib
-* **Model:** `face_landmarker.task` kullanılarak yüz referans noktası analizi
+* **Yüz ve Landmark Tespiti:** Google MediaPipe (FaceLandmarker)
+* **Görüntü İşleme:** OpenCV, Numpy
+* **Yapay Zeka (Test Aşaması):** Scikit-Learn (Random Forest)
 
-## 🚀 Nasıl Çalıştırılır?
-Projeyi kendi bilgisayarınızda denemek için aşağıdaki adımları izleyebilirsiniz:
+## 💻 Nasıl Çalıştırılır?
 
-1. Proje dosyalarını bilgisayarınıza indirin.
-2. Gerekli kütüphanelerin (OpenCV, Dlib vb.) kurulu olduğundan emin olun.
-3. Terminal veya komut satırını proje dizininde açarak aşağıdaki komutu çalıştırın:
-   ```bash
-   python test.py
+1. Gerekli kütüphaneleri yükleyin:
+   `pip install opencv-python mediapipe numpy`
+2. `face_landmarker.task` dosyasının projenin ana dizininde olduğundan emin olun.
+3. Kameranızı bağlayın ve ana scripti çalıştırın:
+   `python main.py`
+4. Programdan çıkmak için 'q', hata durumlarında onay vermek için 'e' tuşunu kullanın.
